@@ -5,7 +5,7 @@ import logging
 import sys
 import azure.functions as func
 
-from sentinel_connector import AzureSentinelConnector
+from .sentinel_connector import AzureSentinelConnector
 
 
 AWS_ACCESS_KEY_ID = os.environ['AWSAccessKeyId']
