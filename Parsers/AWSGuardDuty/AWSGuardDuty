@@ -1,0 +1,39 @@
+// Usage Instruction :
+// Paste below query in log analytics, click on Save button and select as Function from drop down by specifying function name and alias as AWSGuardDuty.
+// Function usually takes 10-15 minutes to activate. You can then use function alias from any other queries (e.g. AWSGuardDuty | take 10).
+// Reference : Using functions in Azure monitor log queries : https://docs.microsoft.com/azure/azure-monitor/log-query/functions
+AWSGuardDuty_CL
+| extend
+    Description_s=column_ifexists('Description_s', ''),
+    Service_Action_ActionType_s=column_ifexists('Service_Action_ActionType_s', ''),
+    Service_Action_NetworkConnectionAction_ConnectionDirection_s=column_ifexists('Service_Action_NetworkConnectionAction_ConnectionDirection_s', ''),
+    Service_Action_NetworkConnectionAction_LocalPortDetails_Port_d=column_ifexists('Service_Action_NetworkConnectionAction_LocalPortDetails_Port_d', ''),
+    Service_Action_NetworkConnectionAction_Protocol_s=column_ifexists('Service_Action_NetworkConnectionAction_Protocol_s', ''),
+    DstGeoCity=parse_json(Service_Action_NetworkConnectionAction_RemoteIpDetails_City_s).CityName,
+    DstGeoCountry=parse_json(Service_Action_NetworkConnectionAction_RemoteIpDetails_Country_s).CountryName,
+    DstGeoLatitude=parse_json(Service_Action_NetworkConnectionAction_RemoteIpDetails_GeoLocation_s).Lat,
+    DstGeoLongitude=parse_json(Service_Action_NetworkConnectionAction_RemoteIpDetails_GeoLocation_s).Lon,
+    Service_Action_NetworkConnectionAction_RemoteIpDetails_IpAddressV4_s=column_ifexists('Service_Action_NetworkConnectionAction_RemoteIpDetails_IpAddressV4_s', ''),
+    Severity=column_ifexists('Severity', ''),
+    Type_s=column_ifexists('Type_s', ''),
+    SrcGeoCity = parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.City.CityName,
+    SrcGeoCountry = parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.Country.CountryName,
+    SrcGeoLatitude = parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.GeoLocation.Lat,
+    SrcGeoLongitude = parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.GeoLocation.Lon,
+    OrganizationAsn = parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.Organization.Asn,
+    OrganizationAsnOrg = parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.Organization.AsnOrg,
+    OrganizationIsp = parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.Organization.Isp,
+    OrganizationOrg = parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.Organization.Org,
+    EventResult = iff(isnotempty(Service_Action_PortProbeAction_Blocked_b), Service_Action_PortProbeAction_Blocked_b, Service_Action_NetworkConnectionAction_Blocked_b),
+    DstPortNumber = iff(isnotempty(Service_Action_NetworkConnectionAction_RemotePortDetails_Port_d), Service_Action_NetworkConnectionAction_RemotePortDetails_Port_d, parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].LocalPortDetails.Port),
+    NetworkApplicationProtocol = iff(isnotempty(Service_Action_NetworkConnectionAction_LocalPortDetails_PortName_s), Service_Action_NetworkConnectionAction_LocalPortDetails_PortName_s, parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].LocalPortDetails.PortName),
+    SrcIpAddr = iff(isnotempty(Service_Action_NetworkConnectionAction_LocalIpDetails_IpAddressV4_s), Service_Action_NetworkConnectionAction_LocalIpDetails_IpAddressV4_s, parse_json(Service_Action_PortProbeAction_PortProbeDetails_s)[0].RemoteIpDetails.IpAddressV4)
+| project-rename
+    EventMessage=Description_s,
+    DvcAction=Service_Action_ActionType_s,
+    NetworkDirection=Service_Action_NetworkConnectionAction_ConnectionDirection_s,
+    SrcPortNumber=Service_Action_NetworkConnectionAction_LocalPortDetails_Port_d,
+    NetworkProtocol=Service_Action_NetworkConnectionAction_Protocol_s,
+    DstIpAddr=Service_Action_NetworkConnectionAction_RemoteIpDetails_IpAddressV4_s,
+    EventSeverity=Severity,
+    EventSubType=Type_s
