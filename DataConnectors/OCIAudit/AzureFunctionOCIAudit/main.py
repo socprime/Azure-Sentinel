@@ -40,7 +40,7 @@ def get_config():
     config = {
         "user": os.environ['user'],
         "key_content": os.environ['key_content'],
-        "pass_phrase": os.environ['pass_phrase'],
+        "pass_phrase": os.environ.get('pass_phrase', ''),
         "fingerprint": os.environ['fingerprint'],
         "tenancy": os.environ['tenancy'],
         "region": os.environ['region']
