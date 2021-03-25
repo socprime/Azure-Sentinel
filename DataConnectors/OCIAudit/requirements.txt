@@ -1,0 +1,5 @@
+azure-functions
+aiohttp==3.7.4.post0
+azure-storage-file-share==12.4.1
+oci==2.34.0
+python-dateutil==2.8.1
