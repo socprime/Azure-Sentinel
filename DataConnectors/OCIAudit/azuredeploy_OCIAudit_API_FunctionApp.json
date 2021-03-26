@@ -26,7 +26,10 @@
         },
         "pass_phrase": {
             "type": "securestring",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Optional"
+            }
         },
         "fingerprint": {
             "type": "string",
