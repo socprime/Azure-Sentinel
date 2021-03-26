@@ -18,30 +18,45 @@
         },
         "user": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Value of 'user' field in API Key Configuration File"
+            }
         },
         "key_content": {
             "type": "securestring",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Content of Private Key File"
+            }
         },
         "pass_phrase": {
             "type": "securestring",
             "defaultValue": "",
             "metadata": {
-                "description": "Optional"
+                "description": "Optional. Required if Private Key is encrypted."
             }
         },
         "fingerprint": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Value of 'fingerprint' field in API Key Configuration File"
+            }
         },
         "tenancy": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Value of 'tenancy' field in API Key Configuration File"
+            }
         },
         "region": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "",
+            "metadata": {
+                "description": "Value of 'region' field in API Key Configuration File"
+            }
         }
     },
     "variables": {
