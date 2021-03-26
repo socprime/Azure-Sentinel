@@ -39,7 +39,7 @@ if not match:
 def get_config():
     config = {
         "user": os.environ['user'],
-        "key_content": os.environ['key_content'],
+        "key_content": parse_key(os.environ['key_content']),
         "pass_phrase": os.environ.get('pass_phrase', ''),
         "fingerprint": os.environ['fingerprint'],
         "tenancy": os.environ['tenancy'],
@@ -87,3 +87,30 @@ async def main(mytimer: func.TimerRequest):
         logging.info('Last event checkpoint saved - {}'.format(last_event_date))
 
     logging.info('Program finished. {} events have been sent.'.format(sentinel.successfull_sent_events_number))
+
+
+def parse_key(key_input):
+    try:
+        begin_line = re.search(r'-----BEGIN [A-Z ]+-----', key_input).group()
+        key_input = key_input.replace(begin_line, '')
+        end_line = re.search(r'-----END [A-Z ]+-----', key_input).group()
+        key_input = key_input.replace(end_line, '')
+        encr_lines = ''
+        proc_type_line = re.search(r'Proc-Type: [^ ]+', key_input)
+        if proc_type_line:
+            proc_type_line = proc_type_line.group()
+            dec_info_line = re.search(r'DEK-Info: [^ ]+', key_input).group()
+            encr_lines += proc_type_line + '\n'
+            encr_lines += dec_info_line + '\n'
+            key_input = key_input.replace(proc_type_line, '')
+            key_input = key_input.replace(dec_info_line, '')
+        body = key_input.strip().replace(' ', '\n')
+        res = ''
+        res += begin_line + '\n'
+        if encr_lines:
+            res += encr_lines + '\n'
+        res += body + '\n'
+        res += end_line
+    except Exception:
+        raise Exception('Error while reading private key.')
+    return res
