@@ -67,7 +67,7 @@ async def main(mytimer: func.TimerRequest):
     await conn.get_blobs(updated_after=last_date, exclude_files=exclude_files, include_files=include_files)
     await conn.process_blobs()
 
-    message = 'Program finished. {} events have been sent. {} events have not been sent'.format(
+    message = 'Sending events finished. {} events have been sent. {} events have not been sent'.format(
         conn.sentinel.successfull_sent_events_number,
         conn.sentinel.failed_sent_events_number
     )
@@ -75,6 +75,7 @@ async def main(mytimer: func.TimerRequest):
 
     await conn.save_checkpoint()
     await conn.delete_old_blobs(last_date)
+    logging.info('Finish script.')
 
 
 def divide_chunks(ls, n):
@@ -205,6 +206,8 @@ class AzureBlobStorageConnector:
                     break
                 await self._delete_blobs(blobs_to_delete)
                 blobs_to_delete = await self.get_blobs_updated_before(date_to, excluding_files, limit=50)
+                if not blobs_to_delete:
+                    logging.info('There are no more blobs to delete.')
 
     async def _delete_blobs(self, blobs):
         if blobs:
