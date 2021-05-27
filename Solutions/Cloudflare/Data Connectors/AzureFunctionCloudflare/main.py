@@ -74,7 +74,7 @@ async def main(mytimer: func.TimerRequest):
     logging.info(message)
 
     await conn.save_checkpoint()
-    await conn.delete_old_blobs()
+    await conn.delete_old_blobs(last_date)
 
 
 def divide_chunks(ls, n):
@@ -99,19 +99,32 @@ class AzureBlobStorageConnector:
         self._blobs_to_delete = []
         self.checkpoint_manager = CheckpointManager(conn_string=os.environ['AzureWebJobsStorage'])
         self.script_start_time = int(time.time())
+        self.deleted_blobs_count = 0
 
     def _create_container_client(self):
         return ContainerClient.from_connection_string(self.__conn_string, self.__container_name, logging_enable=False)
 
     async def get_blobs(self, updated_after: datetime.datetime, exclude_files: list, include_files: set):
         logging.info('Start getting blobs')
+        prefixes = self.get_blob_prefixes(updated_after, include_files)
+        await asyncio.wait([self._get_blobs_with_prefix(prefix, updated_after, exclude_files, include_files) for prefix in prefixes])
+        self.blobs = sorted(self.blobs, key=lambda x: x['last_modified'])
+        logging.info('Finish getting blobs. Count {}'.format(len(self.blobs)))
+
+    async def _get_blobs_with_prefix(self, prefix: str, updated_after: datetime.datetime, exclude_files: list, include_files: set):
+        logging.info('Searching blobs with name that starts with "{}"'.format(prefix))
         container_client = self._create_container_client()
         async with container_client:
-            async for blob in container_client.list_blobs():
+            total = 0
+            for_processing = 0
+            async for blob_obj in container_client.list_blobs(name_starts_with=prefix):
+                blob = self._remove_blob_excessive_fields(blob_obj)
+                total += 1
                 if 'ownership-challenge' in blob['name']:
                     continue
                 if blob['name'] in include_files:
                     self.blobs.append(blob)
+                    for_processing += 1
                     continue
                 if updated_after and blob['last_modified'] < updated_after:
                     self._blobs_to_delete.append(blob)
@@ -120,8 +133,45 @@ class AzureBlobStorageConnector:
                     self._blobs_to_delete.append(blob)
                     continue
                 self.blobs.append(blob)
-        self.blobs = sorted(self.blobs, key=lambda x: x['last_modified'])
-        logging.info('Finish getting blobs. Count {}'.format(len(self.blobs)))
+                for_processing += 1
+        logging.info('For "{}" found {} blobs. Left for processing {}'.format(prefix, total, for_processing))
+
+    def _remove_blob_excessive_fields(self, blob_obj: dict):
+        blob = dict()
+        blob['name'] = blob_obj['name']
+        blob['last_modified'] = blob_obj['last_modified']
+        return blob
+
+    async def get_blobs_updated_before(self, date_to: datetime.datetime, exclude_files: set, limit=50):
+        logging.info('Serching blobs updated before {} for deleting.'.format(date_to))
+        blobs = []
+        if date_to:
+            container_client = self._create_container_client()
+            async with container_client:
+                async for blob_obj in container_client.list_blobs():
+                    blob = self._remove_blob_excessive_fields(blob_obj)
+                    if blob['last_modified'] < date_to and 'ownership-challenge' not in blob['name'] and blob['name'] not in exclude_files:
+                        blobs.append(blob)
+                    if len(blobs) >= limit:
+                        break
+        return blobs
+
+    def get_blob_prefixes(self, date_from: datetime.datetime, include_files: set):
+        prefixes = set()
+        date_from = date_from.date()
+        date_to = datetime.datetime.utcnow().date()
+        date = date_from
+        while date_from <= date <= date_to:
+            prefixes.add(date.strftime('%Y%m%d/'))
+            date += datetime.timedelta(days=1)
+
+        for file_name in include_files:
+            prefix = re.findall(r'^20[0-9][0-9][01][0-9][0123][0-9]/', file_name)
+            if prefix:
+                prefix = prefix[0]
+                prefixes.add(prefix)
+
+        return prefixes
 
     async def process_blobs(self):
         if self.blobs:
@@ -142,24 +192,40 @@ class AzureBlobStorageConnector:
         max_duration = int(MAX_SCRIPT_EXEC_TIME_MINUTES * 60 * 0.85)
         return duration > max_duration
 
-    async def delete_old_blobs(self):
-        if self._blobs_to_delete:
-            all_blobs = list(divide_chunks(self._blobs_to_delete, 50))
-            for blobs in all_blobs:
+    async def delete_old_blobs(self, date_to: datetime.datetime):
+        await self._delete_blobs(self._blobs_to_delete)
+
+        excluding_files = self.get_not_processed_files_names_before_date(date_to)
+
+        if not self.check_if_script_runs_too_long():
+            blobs_to_delete = await self.get_blobs_updated_before(date_to, excluding_files, limit=50)
+            while blobs_to_delete:
+                if self.check_if_script_runs_too_long():
+                    logging.info('Script is running too long. Saving progress and exit.')
+                    break
+                await self._delete_blobs(blobs_to_delete)
+                blobs_to_delete = await self.get_blobs_updated_before(date_to, excluding_files, limit=50)
+
+    async def _delete_blobs(self, blobs):
+        if blobs:
+            blobs = list(divide_chunks(blobs, 50))
+            for blobs_part in blobs:
                 if self.check_if_script_runs_too_long():
                     logging.info('Script is running too long. Saving progress and exit.')
                     return
                 container_client = self._create_container_client()
                 async with container_client:
-                    await asyncio.wait([self._delete_blob(blob, container_client) for blob in blobs])
+                    await asyncio.wait([self._delete_blob(blob, container_client) for blob in blobs_part])
+                logging.info('Total deleted blobs number - {}'.format(self.deleted_blobs_count))
 
     async def _delete_blob(self, blob, container_client):
-        logging.info("Deleting blob {}".format(blob['name']))
+        logging.debug("Deleting blob {}".format(blob['name']))
         await container_client.delete_blob(blob['name'])
+        self.deleted_blobs_count += 1
 
     async def _process_blob(self, blob, container_client):
         async with self.semaphore:
-            logging.info("Start processing {}".format(blob['name']))
+            logging.debug("Start processing {}".format(blob['name']))
             blob_cor = await container_client.download_blob(blob['name'])
             s = ''
             async for chunk in blob_cor.chunks():
@@ -175,7 +241,7 @@ class AzureBlobStorageConnector:
                 event = json.loads(s)
                 await self.sentinel.send(event, log_type=self.log_type)
             self._processed_blobs.append(blob)
-            logging.info("Finish processing {}".format(blob['name']))
+            logging.debug("Finish processing {}".format(blob['name']))
 
     @property
     def _processed_blob_names(self):
