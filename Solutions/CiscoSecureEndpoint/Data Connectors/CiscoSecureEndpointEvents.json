@@ -98,7 +98,7 @@
                 "httpMethod": "Get",
                 "queryTimeFormat": "yyyy-MM-ddTHH:mm:ssZ",
                 "startTimeAttributeName": "start_date",
-                "queryWindowInMin": 5
+                "queryWindowInMin": 60
             },
             "paging": {
                 "pagingType": "None"
