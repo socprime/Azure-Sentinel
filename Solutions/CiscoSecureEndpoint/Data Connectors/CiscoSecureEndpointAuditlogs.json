@@ -1,0 +1,114 @@
+{
+    "kind": "APIPolling",
+    "properties": {
+        "connectorUiConfig": {
+            "id": "CiscoSecureEndpointAuditlogs",
+            "title": "Cisco Secure Endpoint (audit logs)",
+            "publisher": "Cisco",
+            "descriptionMarkdown": "The Cisco Secure Endpoint data connector provides the capability to ingest [Cisco Secure Endpoint audit logs](https://api-docs.amp.cisco.com/api_resources/AuditLog?api_host=api.amp.cisco.com&api_version=v1) into Azure Sentinel.",
+            "graphQueriesTableName": "CiscoSecureEndpoint_auditlogs_CL",
+            "graphQueries": [
+                {
+                    "metricName": "Total data received",
+                    "legend": "Cisco SE audit logs",
+                    "baseQuery": "{{graphQueriesTableName}}"
+                }
+            ],
+            "sampleQueries": [
+                {
+                    "description": "All Cisco SE audit logs",
+                    "query": "{{graphQueriesTableName}}\n| sort by TimeGenerated desc"
+                }
+            ],
+            "dataTypes": [
+                {
+                    "name": "{{graphQueriesTableName}}",
+                    "lastDataReceivedQuery": "{{graphQueriesTableName}}\n            | summarize Time = max(TimeGenerated)\n            | where isnotempty(Time)"
+                }
+            ],
+            "connectivityCriterias": [
+                {
+                    "type": "SentinelKindsV2",
+                    "value": []
+                }
+            ],
+            "availability": {
+                "status": 1,
+                "isPreview": true
+            },
+            "permissions": {
+                "resourceProvider": [
+                    {
+                        "provider": "Microsoft.OperationalInsights/workspaces",
+                        "permissionsDisplayText": "read and write permissions are required.",
+                        "providerDisplayName": "Workspace",
+                        "scope": "Workspace",
+                        "requiredPermissions": {
+                            "write": true,
+                            "read": true,
+                            "delete": true
+                        }
+                    },
+                    {
+                        "provider": "Microsoft.OperationalInsights/workspaces/sharedKeys",
+                        "permissionsDisplayText": "read permissions to shared keys for the workspace are required. [See the documentation to learn more about workspace keys](https://docs.microsoft.com/azure/azure-monitor/platform/agent-windows#obtain-workspace-id-and-key)",
+                        "providerDisplayName": "Keys",
+                        "scope": "Workspace",
+                        "requiredPermissions": {
+                            "action": true
+                        }
+                    }
+                ],
+                "customs": [
+                    {
+                        "name": "Cisco Secure Endpoint API credentials",
+                        "description": "Cisco Secure Endpoint Client ID and API Key are required. [See the documentation to learn more about Cisco Secure Endpoint API](https://api-docs.amp.cisco.com/api_resources?api_host=api.amp.cisco.com&api_version=v1). [API domain](https://api-docs.amp.cisco.com) must be provided as well."
+                    }
+                ]
+            },
+            "instructionSteps": [
+                {
+                    "title": "Connect Cisco Secure Endpoint",
+                    "description": "Please inset your credentials",
+                    "instructions": [
+                        {
+                            "parameters": {
+                                "enable": "true",
+                                "userRequestPlaceHoldersInput": [
+                                    {
+                                        "displayText": "Domain Name",
+                                        "requestObjectKey": "apiEndpoint",
+                                        "placeHolderName": "{{domain}}",
+                                        "placeHolderValue": ""
+                                    }
+                                ]
+                            },
+                            "type": "BasicAuth"
+                        }
+                    ]
+                }
+            ]
+        },
+        "pollingConfig": {
+            "auth": {
+                "authType": "Basic"
+            },
+            "request": {
+                "apiEndpoint": "https://{{domain}}/v1/audit_logs",
+                "httpMethod": "Get",
+                "queryTimeFormat": "yyyy-MM-ddTHH:mm:ssZ",
+                "startTimeAttributeName": "start_time",
+                "endTimeAttributeName": "end_time",
+                "queryWindowInMin": 5
+            },
+            "paging": {
+                "pagingType": "None"
+            },
+            "response": {
+                "eventsJsonPaths": [
+                    "$..data"
+                ]
+            }
+        }
+    }
+}
