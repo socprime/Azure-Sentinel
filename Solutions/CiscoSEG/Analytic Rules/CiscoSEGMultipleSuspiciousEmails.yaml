@@ -1,7 +1,7 @@
 id: dfdb9a73-4335-4bb4-b29b-eb713bce61a6
-name: Cisco SEG - Multiple suspiciuos attachments received
+name: Cisco SEG - Multiple users received same suspicious attachment
 description: |
-  'Detects possibly phishing emails.'
+  'Detects when multiple users receive same suspicious attachment.'
 severity: High
 requiredDataConnectors:
   - connectorId: CiscoSEG

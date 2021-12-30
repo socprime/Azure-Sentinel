@@ -1,7 +1,7 @@
 id: 53242559-95ea-4d4c-b003-107e8f06304b
-name: Cisco SEG - Possible outbreak
+name: Cisco SEG - Positive outbreak filters verdict
 description: |
-  'Detects possible outbreak activity.'
+  'Detects positive outbreak filters verdict.'
 severity: Medium
 requiredDataConnectors:
   - connectorId: CiscoSEG

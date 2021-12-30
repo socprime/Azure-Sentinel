@@ -1,7 +1,7 @@
 id: 9cb4a02d-3708-42ba-b33b-0fdd360ce4b6
-name: Cisco SEG - Unexpected link
+name: Cisco SEG - Unclassified link
 description: |
-  'Detects mails with suspicious links.'
+  'Detects mails with unclassified link which may lead to malicious content.'
 severity: Medium
 requiredDataConnectors:
   - connectorId: CiscoSEG
