@@ -1,0 +1,28 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {},
+    "variables": {
+        "customApis_VendorProductAPI_name": "VendorProductAPI"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/customApis",
+            "apiVersion": "2016-06-01",
+            "name": "[variables('customApis_VendorProductAPI_name')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "connectionParameters": {},
+                "brandColor": "#FFFFFF",
+                "description": "Connector for Vendor Product API",
+                "displayName": "[variables('customApis_VendorProductAPI_name')]",
+                "iconUri": "",
+                "backendService": {
+                    "serviceUrl": ""
+                },
+                "apiType": "Rest",
+                "swagger": {}
+            }
+        }
+    ]
+}

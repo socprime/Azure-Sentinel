@@ -1,0 +1,47 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "VendorProduct-playbookname_Playbook_Name": {
+            "defaultValue": "VendorProduc-playbookname",
+            "type": "string",
+            "metadata": {
+                "description": "Name of the Playbook"
+            }
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "name": "VendorProductAPIConnector_LinkedTemplate",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/socprime/Azure-Sentinel/base-playbooks-solution/Solutions/BasePlaybooksSolution/Playbooks/VendorProductAPIConnector/azuredeploy.json"
+                },
+                "parameters": {}
+            }
+        },
+        {
+            "name": "VendorProduct-playbookname_LinkedTemplate",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'VendorProductAPIConnector_LinkedTemplate')]"
+            ],
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2018-05-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "https://raw.githubusercontent.com/socprime/Azure-Sentinel/base-playbooks-solution/Solutions/BasePlaybooksSolution/Playbooks/Playbooks/VendorProduct-playbookname/azuredeploy.json"
+                },
+                "parameters": {
+                    "PlaybookName": {
+                        "Value": "[parameters('VendorProduct-playbookname_Playbook_Name')]"
+                    }
+                }
+            }
+        }
+    ]
+}
