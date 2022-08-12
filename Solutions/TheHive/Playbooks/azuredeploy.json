@@ -16,6 +16,15 @@
             "description":"Port number of TheHive API. By default 9000."
          }
         },
+        "Http Scheme": {
+            "type": "String",
+            "allowedValues": [
+                "http", "https"
+            ],
+            "metadata": {
+                "description": "Http scheme for TheHive API."
+            }
+        },
         "TheHive-CreateAlert": {
             "defaultValue": "TheHive-CreateAlert",
             "type": "string",
@@ -36,6 +45,13 @@
             "metadata": {
                 "description": "Lock User"
             }
+        },
+        "onPremiseGatewayName": {
+            "defaultValue": "",
+            "type": "String",
+            "metadata": {
+                "description": "Provide the On-premises data gateway that will be used with The Hive connector. Data gateway should be deployed under the same subscription and resource group as playbooks."
+            }
         }
     },
     "variables": {},
@@ -47,7 +63,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://github.com/socprime/Azure-Sentinel/raw/PS-1681_TheHive_Playbooks/Solutions/TheHive/Playbooks/TheHiveConnector/azuredeploy.json"
+                    "uri": "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master//Solutions/TheHive/Playbooks/TheHiveConnector/azuredeploy.json"
                 },
                 "parameters": {
                     "API Hostname": {
@@ -55,6 +71,9 @@
                     },
                     "API Port": {
                         "Value": "[parameters('API Port')]"
+                    },
+                    "Http Scheme": {
+                        "Value": "[parameters('Http Scheme')]"
                     }
                 }
             }
@@ -69,11 +88,14 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://github.com/socprime/Azure-Sentinel/raw/PS-1681_TheHive_Playbooks/Solutions/TheHive/Playbooks/TheHive-CreateAlert/azuredeploy.json"
+                    "uri": "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/TheHive/Playbooks/TheHive-CreateAlert/azuredeploy.json"
                 },
                 "parameters": {
                     "PlaybookName": {
                         "Value": "[parameters('TheHive-CreateAlert')]"
+                    },
+                    "onPremiseGatewayName": {
+                        "Value": "[parameters('onPremiseGatewayName')]"
                     }
                 }
             }
@@ -88,11 +110,14 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://github.com/socprime/Azure-Sentinel/raw/PS-1681_TheHive_Playbooks/Solutions/TheHive/Playbooks/TheHive-CreateCase/azuredeploy.json"
+                    "uri": "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/TheHive/Playbooks/TheHive-CreateCase/azuredeploy.json"
                 },
                 "parameters": {
                     "PlaybookName": {
                         "Value": "[parameters('TheHive-CreateCase')]"
+                    },
+                    "onPremiseGatewayName": {
+                        "Value": "[parameters('onPremiseGatewayName')]"
                     }
                 }
             }
@@ -107,11 +132,14 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "https://github.com/socprime/Azure-Sentinel/raw/PS-1681_TheHive_Playbooks/Solutions/TheHive/Playbooks/TheHive-LockUser/azuredeploy.json"
+                    "uri": "https://raw.githubusercontent.com/Azure/Azure-Sentinel/master/Solutions/TheHive/Playbooks/TheHive-LockUser/azuredeploy.json"
                 },
                 "parameters": {
                     "PlaybookName": {
                         "Value": "[parameters('TheHive-LockUser')]"
+                    },
+                    "onPremiseGatewayName": {
+                        "Value": "[parameters('onPremiseGatewayName')]"
                     }
                 }
             }
