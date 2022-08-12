@@ -23,6 +23,10 @@
             "defaultValue": "TheHive-LockUser",
             "type": "String"
         },
+        "ConnectorName": {
+            "defaultValue": "TheHive",
+            "type": "string"
+        },
         "onPremiseGatewayName": {
             "defaultValue": "",
             "type": "String",
@@ -33,8 +37,7 @@
     },
     "variables": {
         "AzureSentinelConnectionName": "[concat('azuresentinel-', parameters('PlaybookName'))]",
-        "TheHiveConnectionName": "[concat('thehive-connection-', parameters('PlaybookName'))]",
-        "customApis_thehive_API_name":"TheHive"
+        "TheHiveConnectionName": "[concat('thehive-connection-', parameters('PlaybookName'))]"
     },
     "resources": [
         {
@@ -57,7 +60,7 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "api": {
-                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/customApis/', variables('customApis_thehive_API_name'))]"
+                    "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Web/customApis/', parameters('ConnectorName'))]"
                 },
                 "displayName": "[variables('TheHiveConnectionName')]",
                 "parameterValues": {
@@ -238,7 +241,7 @@
                             "TheHive": {
                                 "connectionId": "[resourceId('Microsoft.Web/connections', variables('TheHiveConnectionName'))]",
                                 "connectionName": "[variables('TheHiveConnectionName')]",
-                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/customApis/', variables('customApis_thehive_API_name'))]"
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', resourceGroup().name, '/providers/Microsoft.Web/customApis/', parameters('ConnectorName'))]"
                             }
                         }
                     }
