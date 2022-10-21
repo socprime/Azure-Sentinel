@@ -7,12 +7,13 @@
 ## Table of Contents
 
 1. [Overview](#overview)
-1. [Deploy Custom Connector + Function App + 3 Playbook templates](#deployall)
-1. [Authentication](#authentication)
-1. [Prerequisites](#prerequisites)
-1. [Deployment](#deployment)
-1. [Post Deployment Steps](#postdeployment)
-1. [Limitations](#limitations)
+2. [Deploy Custom Connector + Function App + 3 Playbook templates](#deployall)
+3. [Custom Connector and playbooks OnPrem versions](#onprem)
+4. [Authentication](#authentication)
+5. [Prerequisites](#prerequisites)
+6. [Deployment](#deployment)
+7. [Post Deployment Steps](#postdeployment)
+8. [Limitations](#limitations)
 
 
 <a name="overview">
@@ -40,6 +41,7 @@ You can choose to deploy the whole package: connector + Function App + all three
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzure-Sentinel%2Fmaster%2FPlaybooks%2FFortinet-FortiGate%2Fazuredeploy.json) [![Deploy to Azure Gov](https://aka.ms/deploytoazuregovbutton)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzure-Sentinel%2Fmaster%2FPlaybooks%2FFortinet-FortiGate%2Fazuredeploy.json)
 
 ## Custom Connector and playbooks OnPrem versions
+<a name="onprem">
 
 This package supports OnPrem versions of [Custom Connector](./CustomConnectorOnPrem) and corresponding playbooks:
 - [Fortinet_ResponseOnIP](./PlaybooksOnPrem/Fortinet_ResponseOnIP)
