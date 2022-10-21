@@ -38,21 +38,6 @@
   },
   "resources": [
     {
-      "type": "Microsoft.Web/connections",
-      "apiVersion": "2016-06-01",
-      "name": "[variables('AzureSentinelConnectionName')]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "customParameterValues": {},
-        "api": {
-          "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuresentinel')]"
-        }
-      }
-    },
-    {
-      "name": "[parameters('Playbook Name')]",
-      "type": "Microsoft.Logic/workflows",
-      "location": "[resourceGroup().location]",
       "properties": {
         "state": "Enabled",
         "definition": {
@@ -3527,7 +3512,9 @@
           }
         }
       },
-
+      "name": "[parameters('Playbook Name')]",
+      "type": "Microsoft.Logic/workflows",
+      "location": "[resourceGroup().location]",
       "identity": {
         "type": "UserAssigned",
         "userAssignedIdentities": {
@@ -3541,8 +3528,19 @@
       "dependsOn": [
         "[resourceId('Microsoft.Web/connections', variables('AzureSentinelConnectionName'))]"
       ]
+    },
+    {
+      "type": "Microsoft.Web/connections",
+      "apiVersion": "2016-06-01",
+      "name": "[variables('AzureSentinelConnectionName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "customParameterValues": {},
+        "api": {
+          "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/azuresentinel')]"
+        }
+      }
     }
-
   ],
   "outputs": {}
 }

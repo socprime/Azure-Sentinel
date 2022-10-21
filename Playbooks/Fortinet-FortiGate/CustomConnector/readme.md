@@ -11,6 +11,8 @@ This custom connector connects to Fortinet service end point and perform automat
 ### Prerequisites for deploying Custom Connector
 - Fortinet service end point should be known (ex: https://{yourVMIPorTrafficmanagername}/)
 - Generate an API key. Refer this link [how to generate the API Key](https://www.insoftservices.uk/fortigate-rest-api-token-authentication)
+-  Fortinet Custom connector connector uses [On-Premises Data Gateway](https://docs.microsoft.com/data-integration/gateway/service-gateway-onprem).
+   Therefore, [installation of the On-Premises Data Gateway](https://docs.microsoft.com/azure/logic-apps/logic-apps-gateway-install) and [creation of the On-Premises Data Gateway resource](https://docs.microsoft.com/azure/logic-apps/logic-apps-gateway-connection#create-azure-gateway-resource) are required.
 
 ## Actions supported by Fortinet custom connector
 
