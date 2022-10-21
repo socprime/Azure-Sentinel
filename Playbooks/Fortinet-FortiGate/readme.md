@@ -39,6 +39,14 @@ You can choose to deploy the whole package: connector + Function App + all three
 
 [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzure-Sentinel%2Fmaster%2FPlaybooks%2FFortinet-FortiGate%2Fazuredeploy.json) [![Deploy to Azure Gov](https://aka.ms/deploytoazuregovbutton)](https://portal.azure.us/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2FAzure-Sentinel%2Fmaster%2FPlaybooks%2FFortinet-FortiGate%2Fazuredeploy.json)
 
+## Custom Connector and playbooks OnPrem versions
+
+This package supports OnPrem versions of [Custom Connector](./CustomConnectorOnPrem) and corresponding playbooks:
+- [Fortinet_ResponseOnIP](./PlaybooksOnPrem/Fortinet_ResponseOnIP)
+- [Fortinet_ResponseOnURL](./PlaybooksOnPrem/Fortinet_ResponseOnURL)
+
+They can be deployed separately.
+
 # Fortinet connector documentation 
 
 <a name="authentication">
