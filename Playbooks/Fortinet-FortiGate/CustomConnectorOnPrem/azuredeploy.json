@@ -296,7 +296,7 @@
                         "operationId":"Listaddressobjects",
                         "parameters":[
                            {
-                              "name":"X-FORT-KEY",
+                              "name":"Authorization",
                               "in":"header",
                               "required":true,
                               "type":"string",
@@ -388,7 +388,7 @@
                               }
                            },
                            {
-                              "name":"X-FORT-KEY",
+                              "name":"Authorization",
                               "in":"header",
                               "required":true,
                               "type":"string",
@@ -555,7 +555,7 @@
                               "description":"enter the address object name to filter (e.g. member=@10.10.10.09)"
                            },
                            {
-                              "name":"X-FORT-KEY",
+                              "name":"Authorization",
                               "in":"header",
                               "required":true,
                               "type":"string",
@@ -643,7 +643,7 @@
                               }
                            },
                            {
-                              "name":"X-FORT-KEY",
+                              "name":"Authorization",
                               "in":"header",
                               "required":true,
                               "type":"string",
@@ -686,7 +686,7 @@
                               }
                            },
                            {
-                              "name":"X-FORT-KEY",
+                              "name":"Authorization",
                               "in":"header",
                               "required":true,
                               "type":"string",
@@ -1477,7 +1477,7 @@
                         "operationId":"CheckIFIP_URLBlocked",
                         "parameters":[
                            {
-                              "name":"X-FORT-KEY",
+                              "name":"Authorization",
                               "in":"header",
                               "required":true,
                               "type":"string",
@@ -1723,8 +1723,8 @@
                               "description":"Please enter address object name which you like get details"
                            },
                            {
-                              "name":"X-FORT-KEY",
-                              "in":"query",
+                              "name":"Authorization",
+                              "in":"header",
                               "required":true,
                               "type":"string",
                               "description":"Enter API key"
@@ -1743,18 +1743,8 @@
 
                },
                "securityDefinitions":{
-                  "API Key":{
-                     "type":"apiKey",
-                     "in":"header",
-                     "name":"Authorization"
-                  }
                },
                "security":[
-                  {
-                     "API Key":[
-
-                     ]
-                  }
                ],
                "tags":[
 
