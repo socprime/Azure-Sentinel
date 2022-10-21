@@ -1,4 +1,4 @@
-# Fortinet - ResponseOnIP
+# Fortinet - ResponseOnIP OnPrem version
 
  ## Summary
 
@@ -35,7 +35,8 @@ This playbook allows the SOC users to automatically response to Azure Sentinel i
     * Pre-defined Group Name: Group name which is created in firewall
     * Function app Name: Enter Function app name which is created as Prerequisites
     * Managed Identities Name: Enter the managed identity name (ex: managed identities name) [Create user assigned manage identity](https://docs.microsoft.com/azure/active-directory/managed-identities-azure-resources/how-to-manage-ua-identity-portal)
-
+    * KeyVaultName: Name of Azure Key Vault that will store API key
+    * secretValue: value of API key
 
 ### Post-Deployment instructions
 * Go to logic app designer.
@@ -58,6 +59,14 @@ Once deployment is complete, you will need to authorize each connection.
 #### b. Configurations in Sentinel
 1. In Azure sentinel analytical rules should be configured to trigger an incident with IP Entity.
 2. Configure the automation rules to trigger this playbook
+
+#### c. Configuration of Azure Key Vault
+1. Navigate to new automatically created Azure Key Vault. Name of Key Vault is defined in playbook parameters.
+   ![Key Vault configuration](./KeyVault.png)
+2. Create new Access Police with secret Get permission
+   ![Secret permission creation](./CreatePolice.png)
+3. Find principal by playbook name and select it
+4. Click Create
 
 ## Playbook steps explained
 

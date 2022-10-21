@@ -35,14 +35,14 @@
       }
     },
     "User Identifier Name": {
-      "defaultValue": "fortinet-test-os",
+      "defaultValue": "fortinet-identity",
       "type": "String",
       "metadata": {
         "description": "User Identity"
       }
     },
     "CustomConnectorName":{
-      "defaultValue":"FortinetConnector-test-os",
+      "defaultValue":"FortinetConnector",
       "type":"string",
       "metadata":{
         "description":"Name of the custom connector which interacts with Fortinet-FortiGate"
@@ -63,10 +63,10 @@
       }
     },
     "onPremiseGatewayName": {
-      "defaultValue": "TestGatewayCiscoISE",
+      "defaultValue": "",
       "type": "String",
       "metadata": {
-        "description": "Provide the On-premises data gateway that will be used with PaloAlto connector. Data gateway should be deployed under the same subscription and resource group as playbook."
+        "description": "Provide the On-premises data gateway that will be used with Fortinet connector. Data gateway should be deployed under the same subscription and resource group as playbook."
       }
     }
   },
